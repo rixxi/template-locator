@@ -16,7 +16,7 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 		'directories' => array(
 			// directory => priority,
 		),
-		'cache' => TRUE,
+		'cache' => FALSE,
 		'cacheExistingFilesOnly' => FALSE, // experimental performance optimization
 	);
 
