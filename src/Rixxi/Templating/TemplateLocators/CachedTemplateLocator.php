@@ -57,7 +57,7 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			$templateLocator = $this->templateLocator;
 			$onlyExistingFiles = $this->onlyExistingFiles;
 			return $this->layoutFilesCache->save($name, function () use ($presenter, $templateLocator, $onlyExistingFiles) {
-				$list = $templateLocator->formatTemplateFiles($presenter);
+				$list = $templateLocator->formatLayoutTemplateFiles($presenter);
 				if ($onlyExistingFiles) {
 					$list = array_filter($list, 'is_file');
 				}
