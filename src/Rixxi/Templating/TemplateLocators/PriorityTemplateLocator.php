@@ -22,7 +22,7 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 		$layout = $presenter->layout ? $presenter->layout : 'layout';
 		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = $this->directories + $dir;
+		$directories = array_merge($this->directories, array($dir));
 		foreach ($directories as $dir) {
 			$list[] = $this->getLayoutTemplateFiles("$dir/templates", $_presenter, $layout);
 			$list[] = $this->getLayoutTemplateFiles($dir, $_presenter, $layout);
@@ -48,7 +48,7 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$view = $presenter->view;
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = $this->directories + $dir;
+		$directories = array_merge($this->directories, array($dir));
 		$list = array();
 		foreach ($directories as $dir) {
 			$list[] = $this->getTemplateFiles("$dir/templates", $_presenter, $view);
