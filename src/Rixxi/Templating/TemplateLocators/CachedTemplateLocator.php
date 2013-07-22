@@ -3,6 +3,7 @@
 namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
+use Nette\Caching\Cache;
 use Nette;
 use Rixxi;
 
@@ -34,20 +35,18 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	/**
 	 * @param Rixxi\Templating\ITemplateLocator $templateLocator
 	 * @param Nette\Caching\Cache $cache
-	 * @param string $setupFingerprint
+	 * @param string|NULL $setupFingerprint
 	 * @param bool $onlyExistingFiles
 	 */
-	public function __construct(Rixxi\Templating\ITemplateLocator $templateLocator, Nette\Caching\Cache $cache, $setupFingerprint, $onlyExistingFiles = FALSE)
+	public function __construct(Rixxi\Templating\ITemplateLocator $templateLocator, Nette\Caching\Cache $cache, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
 	{
 		$this->templateLocator = $templateLocator;
+		if ($setupFingerprint !== $cache['setupFingerprint']) {
+			$cache->clean(array(Cache::ALL => TRUE));
+			$cache['setupFingerprint'] = $setupFingerprint;
+		}
 		$this->filesCache = $cache->derive('files');
-		if ($setup !== $this->filesCache->load('setup')) {
-			$this->filesCache->save('setup', $setupFingerprint);
-		}
 		$this->layoutFilesCache = $cache->derive('layoutFiles');
-		if ($setup !== $this->layoutFilesCache->load('setup')) {
-			$this->layoutFilesCache->save('setup', $setupFingerprint);
-		}
 		$this->onlyExistingFiles = $onlyExistingFiles;
 	}
 

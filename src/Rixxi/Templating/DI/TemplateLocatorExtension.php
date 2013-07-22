@@ -63,7 +63,7 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 				->setClass('Rixxi\Templating\TemplateLocators\CachedTemplateLocator', array(
 					new Statement($this->prefix('@locator')),
 					new Statement('@nette.cache', array('Rixxi.TemplateLocator')),
-					md5(json_encode($config)),
+					md5(serialize($config)),
 					$config['cacheExistingFilesOnly'],
 				));
 		}
