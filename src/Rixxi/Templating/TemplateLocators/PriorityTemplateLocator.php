@@ -51,8 +51,8 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$directories = $this->directories + $dir;
 		$list = array();
 		foreach ($directories as $dir) {
-			$list[] = $this->getVariations("$dir/templates", $_presenter, $view);
-			$list[] = $this->getVariations($dir, $_presenter, $view);
+			$list[] = $this->getTemplateFiles("$dir/templates", $_presenter, $view);
+			$list[] = $this->getTemplateFiles($dir, $_presenter, $view);
 		}
 
 		return Arrays::flatten($list);
