@@ -42,6 +42,14 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 			}
 		}
 
+		$processed = array();
+		foreach ($directories as $directory => $priority) {
+			if (FALSE !== ($directory = realpath($directory))) {
+				$processed[$directory] = $priority;
+			}
+		}
+		$directories = $processed;
+
 		$class = $config['class'];
 		$locator = $container->addDefinition($this->prefix('locator'));
 
