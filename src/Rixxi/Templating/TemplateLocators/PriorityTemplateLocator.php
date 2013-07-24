@@ -16,6 +16,7 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$this->directories = $directories;
 	}
 
+
 	public function formatLayoutTemplateFiles(Presenter $presenter)
 	{
 		$name = $presenter->getName();

@@ -20,6 +20,7 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 		'cacheExistingFilesOnly' => FALSE, // experimental performance optimization
 	);
 
+
 	public function loadConfiguration()
 	{
 		$container = $this->getContainerBuilder();
