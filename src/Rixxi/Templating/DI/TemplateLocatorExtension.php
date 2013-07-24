@@ -58,8 +58,8 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 			arsort($directories, SORT_NUMERIC);
 			$locator->setClass('Rixxi\Templating\TemplateLocators\PriorityTemplateLocator', array(array_keys($directories)));
 
-		} elseif ('detect' === $class || 'default' === $class) {
-			$locator->setClass('Rixxi\Templating\TemplateLocators\DefaultTemplateLocator');
+		} elseif ('detect' === $class || 'conventional' === $class) {
+			$locator->setClass('Rixxi\Templating\TemplateLocators\ConventionalTemplateLocator');
 
 		} else {
 			$locator->setClass($class);

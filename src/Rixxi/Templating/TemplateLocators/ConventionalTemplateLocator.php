@@ -6,7 +6,7 @@ use Nette\Application\UI\Presenter;
 use Rixxi;
 
 
-class DefaultTemplateLocator implements Rixxi\Templating\ITemplateLocator
+class ConventionalTemplateLocator implements Rixxi\Templating\ITemplateLocator
 {
 
 	public function formatLayoutTemplateFiles(Presenter $presenter)
