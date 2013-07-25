@@ -3,6 +3,7 @@
 namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
+use Nette\ComponentModel\Component;
 use Rixxi;
 
 
@@ -47,4 +48,61 @@ class ConventionalTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			"$dir/templates/$_presenter.$view.phtml",
 		);
 	}
+
+
+	public function formatComponentTemplateFiles(Component $component, $view = 'default')
+	{
+		$presenter = $component->getPresenter();
+		$name = $presenter->getName();
+		$_presenter = substr($name, strrpos(':' . $name, ':'));
+
+		$componentShortName = $component->getReflection()->getShortName();
+		$variants = $this->getComponentVariants($componentShortName, $view);
+
+		$dir = dirname($presenter->getReflection()->getFileName());
+		$dir = is_dir("$dir/templates") ? $dir : dirname($dir);
+		$this->appendPrefixed($list, "$dir/templates/$_presenter/components", $variants);
+
+		do {
+			$this->appendPrefixed($list, "$dir/templates/components", $variants);
+			$dir = dirname($dir);
+		} while ($dir && ($name = substr($name, 0, strrpos($name, ':'))));
+
+		$dir = dirname($component->getReflection()->getFileName());
+		$this->appendPrefixed($list, "$dir/templates", $variants);
+		$this->appendPrefixed($list, "$dir", $variants);
+
+		return $list;
+	}
+
+
+	private function appendPrefixed(&$list, $values, $prefix)
+	{
+		foreach ($values as $value) {
+			$list[] = "$prefix/$value";
+		}
+	}
+
+
+	private function getComponentVariants($name, $view)
+	{
+		$list = array();
+		if ($view !== 'default') {
+			$list[] = "$name/$view.latte";
+			$list[] = "$name.$view.latte";
+			$list[] = "$name/$view.phtml";
+			$list[] = "$name.$view.phtml";
+		}
+
+		$list[] = "$name/default.latte";
+		$list[] = "$name.default.latte";
+		$list[] = "$name/default.phtml";
+		$list[] = "$name.default.phtml";
+
+		$list[] = "$name.latte";
+		$list[] = "$name.phtml";
+
+		return $list;
+	}
+
 }

@@ -3,6 +3,7 @@
 namespace Rixxi\Templating;
 
 use Nette\Application\UI\Presenter;
+use Nette\ComponentModel\Component;
 
 
 interface ITemplateLocator
@@ -24,5 +25,15 @@ interface ITemplateLocator
 	 * @return array
 	 */
 	function formatTemplateFiles(Presenter $presenter);
+
+
+	/**
+	 * Formats component template file names.
+	 *
+	 * @param Component $component
+	 * @param string $view
+	 * @return array
+	 */
+	function formatComponentTemplateFiles(Component $component, $view = 'default');
 
 }

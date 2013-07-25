@@ -4,6 +4,7 @@ namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
 use Nette\Caching\Cache;
+use Nette\ComponentModel\Component;
 use Nette;
 use Rixxi;
 
@@ -27,6 +28,11 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	private $layoutFilesCache;
 
 	/**
+	 * @var Nette\Caching\Cache
+	 */
+	private $componentFilesCache;
+
+	/**
 	 * @var bool
 	 */
 	private $onlyExistingFiles;
@@ -47,6 +53,7 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		}
 		$this->filesCache = $cache->derive('files');
 		$this->layoutFilesCache = $cache->derive('layoutFiles');
+		$this->componentFilesCache = $cache->derive('componentFiles');
 		$this->onlyExistingFiles = $onlyExistingFiles;
 	}
 
@@ -88,4 +95,24 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		return $this->filesCache[$name];
 	}
 
+
+	public function formatComponentTemplateFiles(Component $component, $view = 'default')
+	{
+		$hash = $component->getPresenter()->getName() . '|' . $component->getReflection()->getShortName() . '|' . $view;
+		if (NULL === $this->componentFilesCache[$hash]) {
+			$templateLocator = $this->templateLocator;
+			$onlyExistingFiles = $this->onlyExistingFiles;
+
+			return $this->componentFilesCache->save($hash, function () use ($component, $view, $templateLocator, $onlyExistingFiles) {
+				$list = $templateLocator->formatComponentTemplateFiles($component, $view);
+				if ($onlyExistingFiles) {
+					$list = array_filter($list, 'is_file');
+				}
+
+				return $list;
+			});
+		}
+
+		return $this->componentFilesCache[$hash];
+	}
 }
