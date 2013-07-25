@@ -26,10 +26,12 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 		$layout = $presenter->layout ? $presenter->layout : 'layout';
 		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = array_merge($this->directories, array($dir));
-		foreach ($directories as $dir) {
-			$list[] = $this->getLayoutTemplateFiles("$dir/templates", $_presenter, $layout);
+		$directories = $this->getAdjustedDirectories($name, $dir);
+		foreach ($directories as $base => $dir) {
 			$list[] = $this->getLayoutTemplateFiles($dir, $_presenter, $layout);
+			if ($base !== $dir) {
+				$list[] = $this->getLayoutTemplateFiles(dirname($dir), $_presenter, $layout);
+			}
 		}
 
 		do {
@@ -52,11 +54,13 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$view = $presenter->view;
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = array_merge($this->directories, array($dir));
+		$directories = $this->getAdjustedDirectories($name, $dir);
 		$list = array();
-		foreach ($directories as $dir) {
-			$list[] = $this->getTemplateFiles("$dir/templates", $_presenter, $view);
+		foreach ($directories as $base => $dir) {
 			$list[] = $this->getTemplateFiles($dir, $_presenter, $view);
+			if ($base !== $dir) {
+				$list[] = $this->getTemplateFiles(dirname($dir), $_presenter, $view);
+			}
 		}
 
 		return Arrays::flatten($list);
@@ -82,5 +86,30 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			"$dir/templates/$presenter/$view.phtml",
 			"$dir/templates/$presenter.$view.phtml",
 		);
+	}
+
+
+	private function getAdjustedDirectories($name, $presenterDir)
+	{
+		foreach ($this->directories as $dir)
+		{
+			if (0 === ($pos = strpos($presenterDir, $dir))) {
+				if ($presenterDir === $dir) {
+					$values = array_values($this->directories);
+					$adjusted = array_combine($values, $values);
+
+				} else {
+					$adjusted = array();
+					$path = substr($presenterDir, strlen($dir) + 1);
+					foreach ($this->directories as $dir) {
+						$adjusted[$dir] = "$dir/$path";
+					}
+				}
+
+				return $adjusted;
+			}
+		}
+
+		throw new \UnexpectedValueException("Presenter directory '$presenterDir' is not amongst directories");
 	}
 }
