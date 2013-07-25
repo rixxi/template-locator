@@ -3,6 +3,7 @@
 namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
+use Nette\ComponentModel\Component;
 use Nette\Utils\Arrays;
 use Rixxi;
 
@@ -86,6 +87,72 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			"$dir/templates/$presenter/$view.phtml",
 			"$dir/templates/$presenter.$view.phtml",
 		);
+	}
+
+
+	public function formatComponentTemplateFiles(Component $component)
+	{
+		$presenter = $component->getPresenter();
+		$name = $presenter->getName();
+		$_presenter = substr($name, strrpos(':' . $name, ':'));
+		$view = isset($component->view) ? $component->view : 'default';
+
+		$componentShortName = $component->getReflection()->getShortName();
+		$variants = $this->getComponentVariants($componentShortName, $view);
+
+		$dir = dirname($presenter->getReflection()->getFileName());
+		$directories = $this->getAdjustedDirectories($name, $dir);
+		foreach ($directories as $base => $dir) {
+			$this->appendPrefixed($list, "$dir/templates/$_presenter/components", $variants);
+			if ($base !== $dir) {
+				$this->appendPrefixed($list, dirname($dir) . "/templates/$_presenter/components", $variants);
+			}
+		}
+
+		do {
+			$parents = array();
+			foreach ($directories as $dir) {
+				$this->appendPrefixed($list, "$dir/templates/components", $variants);
+				$parents[] = dirname($dir);
+			}
+			$directories = $parents;
+		} while ($directories && ($name = substr($name, 0, strrpos($name, ':'))));
+
+		$dir = dirname($component->getReflection()->getFileName());
+		$this->appendPrefixed($list, "$dir/templates", $variants);
+		$this->appendPrefixed($list, "$dir", $variants);
+
+		return $list;
+	}
+
+
+	private function appendPrefixed(&$list, $values, $prefix)
+	{
+		foreach ($values as $value) {
+			$list[] = "$prefix/$value";
+		}
+	}
+
+
+	private function getComponentVariants($name, $view)
+	{
+		$list = array();
+		if ($view !== 'default') {
+			$list[] = "$name/$view.latte";
+			$list[] = "$name.$view.latte";
+			$list[] = "$name/$view.phtml";
+			$list[] = "$name.$view.phtml";
+		}
+
+		$list[] = "$name/default.latte";
+		$list[] = "$name.default.latte";
+		$list[] = "$name/default.phtml";
+		$list[] = "$name.default.phtml";
+
+		$list[] = "$name.latte";
+		$list[] = "$name.phtml";
+
+		return $list;
 	}
 
 
