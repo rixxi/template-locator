@@ -14,7 +14,7 @@ interface ITemplateLocator
 	 * @param Presenter $presenter
 	 * @return array
 	 */
-	public function formatLayoutTemplateFiles(Presenter $presenter);
+	function formatLayoutTemplateFiles(Presenter $presenter);
 
 
 	/**
@@ -23,6 +23,6 @@ interface ITemplateLocator
 	 * @param Presenter $presenter
 	 * @return array
 	 */
-	public function formatTemplateFiles(Presenter $presenter);
+	function formatTemplateFiles(Presenter $presenter);
 
 }
