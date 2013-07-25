@@ -11,6 +11,9 @@ use Rixxi;
 class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 {
 
+	/** @var array */
+	private $directories;
+
 	public function __construct($directories)
 	{
 		$this->directories = $directories;
