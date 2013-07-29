@@ -8,7 +8,6 @@ use Nette\Utils\Arrays;
 use Rixxi;
 
 
-
 class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 {
 
