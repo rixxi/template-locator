@@ -97,6 +97,9 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 
 		$componentShortName = $component->getReflection()->getShortName();
+		if (substr($componentShortName, -9) === 'Component') {
+			$componentShortName = substr($componentShortName, 0, -9);
+		}
 		$variants = $this->getComponentVariants($componentShortName, $view);
 
 		$dir = dirname($presenter->getReflection()->getFileName());
