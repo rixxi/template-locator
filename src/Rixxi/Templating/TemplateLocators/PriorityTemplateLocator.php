@@ -6,6 +6,7 @@ use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\Component;
 use Nette\Utils\Arrays;
 use Rixxi;
+use Rixxi\Templating\Exceptions\InvalidStateException;
 
 
 class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
@@ -179,6 +180,6 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			}
 		}
 
-		throw new \UnexpectedValueException("Presenter directory '$presenterDir' is not amongst directories");
+		throw new InvalidStateException("Presenter directory '$presenterDir' is not amongst directories");
 	}
 }

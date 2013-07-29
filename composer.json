@@ -17,6 +17,9 @@
 	"autoload": {
 		"psr-0": {
 			"Rixxi\\Templating\\": "src/"
-		}
+		},
+		"classmap": [
+			"src/Rixxi/Templating/exceptions.php"
+		]
 	}
 }
