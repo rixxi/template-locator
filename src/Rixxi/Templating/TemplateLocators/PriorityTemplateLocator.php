@@ -40,6 +40,11 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			foreach ($directories as $dir) {
 				$list[] = "$dir/templates/@$layout.latte";
 				$list[] = "$dir/templates/@$layout.phtml";
+				if (basename($dir) === 'presenters') {
+					$parent = dirname($dir);
+					$list[] = "$parent/templates/@$layout.latte";
+					$list[] = "$parent/templates/@$layout.phtml";
+				}
 				$parents[] = dirname($dir);
 			}
 			$directories = $parents;
@@ -116,6 +121,9 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 			$parents = array();
 			foreach ($directories as $dir) {
 				$this->appendPrefixed($list, "$dir/templates/components", $variants);
+				if (basename($dir) === 'presenters') {
+					$this->appendPrefixed($list, dirname($dir) . '/templates/components', $variants);
+				}
 				$parents[] = dirname($dir);
 			}
 			$directories = $parents;
