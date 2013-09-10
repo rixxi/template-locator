@@ -6,7 +6,7 @@ use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\Component;
 use Nette\Utils\Arrays;
 use Rixxi;
-use Rixxi\Templating\Exceptions\InvalidStateException;
+use Rixxi\Templating\InvalidStateException;
 
 
 class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator

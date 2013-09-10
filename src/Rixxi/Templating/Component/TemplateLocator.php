@@ -5,7 +5,7 @@ namespace Rixxi\Templating\Component;
 use Nette;
 use Nette\Templating\FileTemplate;
 use Rixxi;
-use Rixxi\Templating\Exceptions\InvalidStateException;
+use Rixxi\Templating\InvalidStateException;
 
 
 trait TemplateLocator
