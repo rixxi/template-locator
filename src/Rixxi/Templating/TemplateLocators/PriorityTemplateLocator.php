@@ -5,10 +5,20 @@ namespace Rixxi\Templating\TemplateLocators;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\Component;
 use Nette\Utils\Arrays;
+use Nette;
 use Rixxi;
-use Rixxi\Templating\InvalidStateException;
 
 
+/**
+ * Deeper directory will be selected even if there is root with higher priority with matching template.
+ * Eg.:
+ *  directories:
+ *      a: 1
+ *      b: +9000
+ *  templates:
+ *      - a/NameModule/templates/components/Name/default.latte [ deep, selected ]
+ *      - b/templates/components/Name/default.latte [ shallow ]
+ */
 class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 {
 
@@ -26,29 +36,21 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$name = $presenter->getName();
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 		$layout = $presenter->layout ? $presenter->layout : 'layout';
-		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = $this->getAdjustedDirectories($name, $dir);
-		foreach ($directories as $base => $dir) {
+		$directories = $this->getAdjustedDirectories($presenter, $moduleDepth);
+		$list = array();
+		foreach ($directories as $dir) {
+			$list[] = $this->getLayoutTemplateFiles("$dir/presenters", $_presenter, $layout);
 			$list[] = $this->getLayoutTemplateFiles($dir, $_presenter, $layout);
-			if ($base !== $dir) {
-				$list[] = $this->getLayoutTemplateFiles(dirname($dir), $_presenter, $layout);
-			}
 		}
 
 		do {
-			$parents = array();
 			foreach ($directories as $dir) {
+				$list[] = "$dir/presenters/templates/@$layout.latte";
+				$list[] = "$dir/presenters/templates/@$layout.phtml";
 				$list[] = "$dir/templates/@$layout.latte";
 				$list[] = "$dir/templates/@$layout.phtml";
-				if (basename($dir) === 'presenters') {
-					$parent = dirname($dir);
-					$list[] = "$parent/templates/@$layout.latte";
-					$list[] = "$parent/templates/@$layout.phtml";
-				}
-				$parents[] = dirname($dir);
 			}
-			$directories = $parents;
-		} while ($directories && ($name = substr($name, 0, strrpos($name, ':'))));
+		} while ($moduleDepth-- && $directories = array_map('dirname', $directories));
 
 		return Arrays::flatten($list);
 	}
@@ -59,14 +61,11 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		$name = $presenter->getName();
 		$view = $presenter->view;
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
-		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = $this->getAdjustedDirectories($name, $dir);
+		$directories = $this->getAdjustedDirectories($presenter);
 		$list = array();
-		foreach ($directories as $base => $dir) {
+		foreach ($directories as $dir) {
+			$list[] = $this->getTemplateFiles("$dir/presenters", $_presenter, $view);
 			$list[] = $this->getTemplateFiles($dir, $_presenter, $view);
-			if ($base !== $dir) {
-				$list[] = $this->getTemplateFiles(dirname($dir), $_presenter, $view);
-			}
 		}
 
 		return Arrays::flatten($list);
@@ -95,9 +94,29 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	}
 
 
+	/**
+	 * @inherit
+	 *
+	 * Note: Component class name suffix Component is stripped.
+	 *
+	 * Presenter templates are added per module
+	 *  <directory>/[Name[Module]/][presenters/][<Presenter>/]templates/components/<Name>/<view>.(latte|phtml)
+	 *  <directory>/[Name[Module]/][presenters/][<Presenter>/]templates/components/<Name>.<view>.(latte|phtml)
+	 *  <directory>/[Name[Module]/][presenters/][<Presenter>/]templates/components/<Name>/default.(latte|phtml)
+	 *  <directory>/[Name[Module]/][presenters/][<Presenter>/]templates/components/<Name>.default.(latte|phtml)
+	 *  <directory>/[Name[Module]/][presenters/][<Presenter>/]templates/components/<Name>.(latte|phtml)
+	 *
+	 * Last component directory is added
+	 *  <component directory>/[templates/]<Name>/<view>.(latte|phtml)
+	 *  <component directory>/[templates/]<Name>.<view>.(latte|phtml)
+	 *  <component directory>/[templates/]<Name>/default.(latte|phtml)
+	 *  <component directory>/[templates/]<Name>.default.(latte|phtml)
+	 *  <component directory>/[templates/]<Name>.(latte|phtml)
+	 */
 	public function formatComponentTemplateFiles(Component $component, $view = 'default')
 	{
 		$presenter = $component->getPresenter();
+		/** @var \Nette\Application\UI\Presenter $presenter */
 		$name = $presenter->getName();
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 
@@ -107,27 +126,23 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 		}
 		$variants = $this->getComponentVariants($componentShortName, $view);
 
-		$dir = dirname($presenter->getReflection()->getFileName());
-		$directories = $this->getAdjustedDirectories($name, $dir);
+		$directories = $this->getAdjustedDirectories($presenter, $moduleDepth);
 		$list = array();
-		foreach ($directories as $base => $dir) {
+		foreach ($directories as $dir) {
+			$this->appendPrefixed($list, "$dir/presenters/templates/$_presenter/components", $variants);
 			$this->appendPrefixed($list, "$dir/templates/$_presenter/components", $variants);
-			if ($base !== $dir) {
-				$this->appendPrefixed($list, dirname($dir) . "/templates/$_presenter/components", $variants);
-			}
+			$this->appendPrefixed($list, "$dir/presenters/templates/components", $variants);
+			$this->appendPrefixed($list, "$dir/templates/components", $variants);
 		}
 
 		do {
-			$parents = array();
 			foreach ($directories as $dir) {
 				$this->appendPrefixed($list, "$dir/templates/components", $variants);
 				if (basename($dir) === 'presenters') {
 					$this->appendPrefixed($list, dirname($dir) . '/templates/components', $variants);
 				}
-				$parents[] = dirname($dir);
 			}
-			$directories = $parents;
-		} while ($directories && ($name = substr($name, 0, strrpos($name, ':'))));
+		} while ($moduleDepth-- && $directories = array_map('dirname', $directories));
 
 		$dir = dirname($component->getReflection()->getFileName());
 		$this->appendPrefixed($list, "$dir/templates", $variants);
@@ -167,27 +182,29 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	}
 
 
-	private function getAdjustedDirectories($name, $presenterDir)
+	private function getAdjustedDirectories(Nette\Application\UI\Presenter $presenter, &$moduleDepth = NULL)
 	{
+		preg_match('~(?P<modules>([^\\\\]+Module\\\\)*)(?P<presenter>[^\\\\]+)Presenter~i', get_class($presenter), $matches);
+		$slugs = preg_split('~(Module\\\\)~i', $matches['modules'], -1, PREG_SPLIT_NO_EMPTY);
+		$moduleDepth = count($slugs);
+
+		if ($moduleDepth === 0) {
+			return $this->directories;
+		}
+
+		$paths = array(
+			implode('Module' . DIRECTORY_SEPARATOR, $slugs) . 'Module',
+			implode(DIRECTORY_SEPARATOR, $slugs),
+		);
+
+		$adjusted = array();
 		foreach ($this->directories as $dir)
 		{
-			if (0 === ($pos = strpos($presenterDir, $dir))) {
-				if ($presenterDir === $dir) {
-					$values = array_values($this->directories);
-					$adjusted = array_combine($values, $values);
-
-				} else {
-					$adjusted = array();
-					$path = substr($presenterDir, strlen($dir) + 1);
-					foreach ($this->directories as $dir) {
-						$adjusted[$dir] = "$dir/$path";
-					}
-				}
-
-				return $adjusted;
+			foreach ($paths as $path) {
+				$adjusted[] = $dir . DIRECTORY_SEPARATOR . $path;
 			}
 		}
 
-		throw new InvalidStateException("Presenter directory '$presenterDir' is not amongst directories");
+		return $adjusted;
 	}
 }
