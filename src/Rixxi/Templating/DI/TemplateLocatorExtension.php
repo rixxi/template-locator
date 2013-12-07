@@ -45,7 +45,7 @@ class TemplateLocatorExtension extends Nette\DI\CompilerExtension
 
 		$processed = array();
 		foreach ($directories as $directory => $priority) {
-			if (FALSE !== ($directory = realpath($directory))) {
+			if (FALSE !== ($directory = realpath($container->expand($directory)))) {
 				$processed[$directory] = $priority;
 			}
 		}
