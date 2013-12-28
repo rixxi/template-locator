@@ -44,9 +44,10 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	 * @param string|NULL $setupFingerprint
 	 * @param bool $onlyExistingFiles
 	 */
-	public function __construct(Rixxi\Templating\ITemplateLocator $templateLocator, Nette\Caching\Cache $cache, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
+	public function __construct(Rixxi\Templating\ITemplateLocator $templateLocator, Nette\Caching\IStorage $storage, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
 	{
 		$this->templateLocator = $templateLocator;
+        $cache = new Nette\Caching\Cache($storage, 'Rixxi.TemplateLocator');
 		if ($setupFingerprint !== $cache['setupFingerprint']) {
 			$cache->clean(array(Cache::ALL => TRUE));
 			$cache['setupFingerprint'] = $setupFingerprint;
