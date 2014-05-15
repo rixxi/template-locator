@@ -104,8 +104,8 @@ class CachedTemplateLocator implements ITemplateLocator
 			$templateLocator = $this->templateLocator;
 			$onlyExistingFiles = $this->onlyExistingFiles;
 
-			return $this->componentFilesCache->save($hash, function () use ($component, $view, $templateLocator, $onlyExistingFiles) {
-				$list = $templateLocator->formatComponentTemplateFiles($component, $view);
+			return $this->componentFilesCache->save($hash, function () use ($component, $renderMode, $templateLocator, $onlyExistingFiles) {
+				$list = $templateLocator->formatComponentTemplateFiles($component, $renderMode);
 				if ($onlyExistingFiles) {
 					$list = array_filter($list, 'is_file');
 				}

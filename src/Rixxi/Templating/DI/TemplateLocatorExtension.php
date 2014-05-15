@@ -23,7 +23,7 @@ class TemplateLocatorExtension extends CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$container = $this->getContainerBuilder();
+		$builder = $this->getContainerBuilder();
 
 		$config = $this->getConfig($this->defaults);
 
@@ -45,14 +45,14 @@ class TemplateLocatorExtension extends CompilerExtension
 
 		$processed = array();
 		foreach ($directories as $directory => $priority) {
-			if (FALSE !== ($directory = realpath($container->expand($directory)))) {
+			if (FALSE !== ($directory = realpath($builder->expand($directory)))) {
 				$processed[$directory] = $priority;
 			}
 		}
 		$directories = $processed;
 
 		$class = $config['class'];
-		$locator = $container->addDefinition($this->prefix('locator'));
+		$locator = $builder->addDefinition($this->prefix('locator'));
 
 		if ('detect' === $class && count($directories) || 'priority' === $class) {
 			arsort($directories, SORT_NUMERIC);
@@ -68,7 +68,7 @@ class TemplateLocatorExtension extends CompilerExtension
 		if ($config['cache']) {
 			$locator->setAutowired(FALSE);
 
-			$container->addDefinition($this->prefix('cachedLocator'))
+			$builder->addDefinition($this->prefix('cachedLocator'))
 				->setClass('Rixxi\Templating\TemplateLocators\CachedTemplateLocator', array(
 					new Statement($this->prefix('@locator')),
 					2 => md5(serialize($config)),
