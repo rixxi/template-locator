@@ -2,15 +2,13 @@
 
 namespace Rixxi\Templating\Presenter;
 
-use Rixxi;
-
 
 trait TemplateLocator
 {
 
 	/**
 	 * @inject
-	 * @var Rixxi\Templating\ITemplateLocator
+	 * @var \Rixxi\Templating\ITemplateLocator
 	 */
 	public $templateLocator;
 

@@ -4,10 +4,10 @@ namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\Component;
-use Rixxi;
+use Rixxi\Templating\ITemplateLocator;
 
 
-class ConventionalTemplateLocator implements Rixxi\Templating\ITemplateLocator
+class ConventionalTemplateLocator implements ITemplateLocator
 {
 
 	public function formatLayoutTemplateFiles(Presenter $presenter)

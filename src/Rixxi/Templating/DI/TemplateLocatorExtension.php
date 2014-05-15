@@ -2,13 +2,13 @@
 
 namespace Rixxi\Templating\DI;
 
-use Nette;
-use Nette\Utils\Validators;
+use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
+use Nette\Utils\Validators;
 use Nette\Utils\Arrays;
 
 
-class TemplateLocatorExtension extends Nette\DI\CompilerExtension
+class TemplateLocatorExtension extends CompilerExtension
 {
 
 	private $defaults = array(

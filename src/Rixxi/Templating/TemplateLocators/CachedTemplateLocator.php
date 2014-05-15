@@ -3,32 +3,32 @@
 namespace Rixxi\Templating\TemplateLocators;
 
 use Nette\Application\UI\Presenter;
+use Nette\Caching\IStorage as ICachingStorage;
 use Nette\Caching\Cache;
 use Nette\ComponentModel\Component;
-use Nette;
-use Rixxi;
+use Rixxi\Templating\ITemplateLocator;
 
 
-class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
+class CachedTemplateLocator implements ITemplateLocator
 {
 
 	/**
-	 * @var Rixxi\Templating\ITemplateLocator
+	 * @var ITemplateLocator
 	 */
 	private $templateLocator;
 
 	/**
-	 * @var Nette\Caching\Cache
+	 * @var Cache
 	 */
 	private $filesCache;
 
 	/**
-	 * @var Nette\Caching\Cache
+	 * @var Cache
 	 */
 	private $layoutFilesCache;
 
 	/**
-	 * @var Nette\Caching\Cache
+	 * @var Cache
 	 */
 	private $componentFilesCache;
 
@@ -39,15 +39,15 @@ class CachedTemplateLocator implements Rixxi\Templating\ITemplateLocator
 
 
 	/**
-	 * @param Rixxi\Templating\ITemplateLocator $templateLocator
-	 * @param Nette\Caching\Cache $cache
+	 * @param ITemplateLocator $templateLocator
+	 * @param Cache $cache
 	 * @param string|NULL $setupFingerprint
 	 * @param bool $onlyExistingFiles
 	 */
-	public function __construct(Rixxi\Templating\ITemplateLocator $templateLocator, Nette\Caching\IStorage $storage, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
+	public function __construct(ITemplateLocator $templateLocator, ICachingStorage $storage, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
 	{
 		$this->templateLocator = $templateLocator;
-        $cache = new Nette\Caching\Cache($storage, 'Rixxi.TemplateLocator');
+        $cache = new Cache($storage, 'Rixxi.TemplateLocator');
 		if ($setupFingerprint !== $cache['setupFingerprint']) {
 			$cache->clean(array(Cache::ALL => TRUE));
 			$cache['setupFingerprint'] = $setupFingerprint;

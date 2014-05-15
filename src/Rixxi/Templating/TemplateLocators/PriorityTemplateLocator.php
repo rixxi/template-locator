@@ -5,8 +5,7 @@ namespace Rixxi\Templating\TemplateLocators;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\Component;
 use Nette\Utils\Arrays;
-use Nette;
-use Rixxi;
+use Rixxi\Templating\ITemplateLocator;
 
 
 /**
@@ -19,7 +18,7 @@ use Rixxi;
  *      - a/NameModule/templates/components/Name/default.latte [ deep, selected ]
  *      - b/templates/components/Name/default.latte [ shallow ]
  */
-class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
+class PriorityTemplateLocator implements ITemplateLocator
 {
 
 	/** @var array */
@@ -182,7 +181,7 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	}
 
 
-	private function getAdjustedDirectories(Nette\Application\UI\Presenter $presenter, &$moduleDepth = NULL)
+	private function getAdjustedDirectories(Presenter $presenter, &$moduleDepth = NULL)
 	{
 		preg_match('~(?P<modules>([^\\\\]+Module\\\\)*)(?P<presenter>[^\\\\]+)Presenter~i', get_class($presenter), $matches);
 		$slugs = preg_split('~(Module\\\\)~i', $matches['modules'], -1, PREG_SPLIT_NO_EMPTY);
