@@ -8,6 +8,9 @@ use Rixxi;
 use Rixxi\Templating\InvalidStateException;
 
 
+/**
+ * Allows components to use custom templates. Supports views.
+ */
 trait TemplateLocator
 {
 

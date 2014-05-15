@@ -39,10 +39,10 @@ class CachedTemplateLocator implements ITemplateLocator
 
 
 	/**
-	 * @param ITemplateLocator $templateLocator
-	 * @param Cache $cache
-	 * @param string|NULL $setupFingerprint
-	 * @param bool $onlyExistingFiles
+	 * @param ITemplateLocator
+	 * @param Cache
+	 * @param string|null
+	 * @param bool
 	 */
 	public function __construct(ITemplateLocator $templateLocator, ICachingStorage $storage, $setupFingerprint = NULL, $onlyExistingFiles = FALSE)
 	{

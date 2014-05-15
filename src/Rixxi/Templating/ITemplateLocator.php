@@ -12,7 +12,7 @@ interface ITemplateLocator
 	/**
 	 * Formats layout template file names.
 	 *
-	 * @param Presenter $presenter
+	 * @param Presenter
 	 * @return array
 	 */
 	function formatLayoutTemplateFiles(Presenter $presenter);
@@ -21,7 +21,7 @@ interface ITemplateLocator
 	/**
 	 * Formats view template file names.
 	 *
-	 * @param Presenter $presenter
+	 * @param Presenter
 	 * @return array
 	 */
 	function formatTemplateFiles(Presenter $presenter);
@@ -30,8 +30,8 @@ interface ITemplateLocator
 	/**
 	 * Formats component template file names.
 	 *
-	 * @param Component $component
-	 * @param string $view
+	 * @param Component
+	 * @param string
 	 * @return array
 	 */
 	function formatComponentTemplateFiles(Component $component, $view = 'default');

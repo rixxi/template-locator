@@ -94,8 +94,6 @@ class PriorityTemplateLocator implements ITemplateLocator
 
 
 	/**
-	 * @inherit
-	 *
 	 * Note: Component class name suffix Component is stripped.
 	 *
 	 * Presenter templates are added per module
@@ -111,6 +109,8 @@ class PriorityTemplateLocator implements ITemplateLocator
 	 *  <component directory>/[templates/]<Name>/default.(latte|phtml)
 	 *  <component directory>/[templates/]<Name>.default.(latte|phtml)
 	 *  <component directory>/[templates/]<Name>.(latte|phtml)
+	 *
+	 * @inherit
 	 */
 	public function formatComponentTemplateFiles(Component $component, $view = 'default')
 	{
