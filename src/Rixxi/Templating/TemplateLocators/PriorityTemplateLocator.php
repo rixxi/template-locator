@@ -163,17 +163,17 @@ class PriorityTemplateLocator implements Rixxi\Templating\ITemplateLocator
 	private function getComponentVariants($name, $view)
 	{
 		$list = array();
-		if ($view !== 'default') {
-			$list[] = "$name/$view.latte";
-			$list[] = "$name.$view.latte";
-			$list[] = "$name/$view.phtml";
-			$list[] = "$name.$view.phtml";
-		}
+		$list[] = "$name/$view.latte";
+		$list[] = "$name.$view.latte";
+		$list[] = "$name/$view.phtml";
+		$list[] = "$name.$view.phtml";
 
-		$list[] = "$name/default.latte";
-		$list[] = "$name.default.latte";
-		$list[] = "$name/default.phtml";
-		$list[] = "$name.default.phtml";
+		if ($view !== 'default') {
+			$list[] = "$name/default.latte";
+			$list[] = "$name.default.latte";
+			$list[] = "$name/default.phtml";
+			$list[] = "$name.default.phtml";
+		}
 
 		$list[] = "$name.latte";
 		$list[] = "$name.phtml";
