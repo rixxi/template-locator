@@ -1,6 +1,6 @@
 <?php
 
-namespace Rixxi\Templating\Presenter;
+namespace Rixxi\Application\UI\Presenter;
 
 
 trait TemplateLocator

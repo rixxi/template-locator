@@ -16,6 +16,7 @@
 	},
 	"autoload": {
 		"psr-0": {
+			"Rixxi\\Application\\UI\\": "src/",
 			"Rixxi\\Templating\\": "src/"
 		},
 		"classmap": [
