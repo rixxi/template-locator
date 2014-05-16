@@ -12,7 +12,8 @@
 		"issues": "https://github.com/rixxi/template-locator"
 	},
 	"require": {
-		"nette/nette": "@dev"
+		"nette/nette": "~2.2",
+		"rixxi/control-render-mode": "~1.0"
 	},
 	"autoload": {
 		"psr-0": {

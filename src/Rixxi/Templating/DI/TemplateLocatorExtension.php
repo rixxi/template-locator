@@ -11,6 +11,8 @@ use Nette\Utils\Arrays;
 class TemplateLocatorExtension extends CompilerExtension
 {
 
+	const TAG_COMPONENT_TEMPLATE_FACTORY = 'rixxi.component.templateFactory';
+
 	private $defaults = array(
 		'class' => 'detect',
 		'directories' => array(
@@ -74,6 +76,20 @@ class TemplateLocatorExtension extends CompilerExtension
 					2 => md5(serialize($config)),
 					$config['cacheExistingFilesOnly'],
 				));
+		}
+
+		$builder->addDefinition($this->prefix('controlTemplateFactory'))
+			->setClass('Rixxi\Application\UI\Control\TemplateFactory')
+			->setAutowired(FALSE);
+	}
+
+
+	public function beforeCompile()
+	{
+		$builder = $this->getContainerBuilder();
+		foreach (array_keys($builder->findByTag(self::TAG_COMPONENT_TEMPLATE_FACTORY)) as $service) {
+			$builder->getDefinition($service)
+				->addSetup('setTemplateFactory', array($this->prefix('@controlTemplateFactory')));
 		}
 	}
 
