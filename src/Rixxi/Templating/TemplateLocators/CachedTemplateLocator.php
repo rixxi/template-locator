@@ -97,9 +97,9 @@ class CachedTemplateLocator implements ITemplateLocator
 	}
 
 
-	public function formatComponentTemplateFiles(Component $component, $view = 'default')
+	public function formatComponentTemplateFiles(Component $component, $renderMode = ITemplateLocator::DEFAULT_COMPONENT_RENDER_MODE)
 	{
-		$hash = $component->getPresenter()->getName() . '|' . $component->getReflection()->getShortName() . '|' . $view;
+		$hash = $component->getPresenter()->getName() . '|' . $component->getReflection()->getShortName() . '|' . $renderMode;
 		if (NULL === $this->componentFilesCache[$hash]) {
 			$templateLocator = $this->templateLocator;
 			$onlyExistingFiles = $this->onlyExistingFiles;

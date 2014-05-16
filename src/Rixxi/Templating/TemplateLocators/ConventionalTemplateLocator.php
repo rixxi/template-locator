@@ -50,14 +50,14 @@ class ConventionalTemplateLocator implements ITemplateLocator
 	}
 
 
-	public function formatComponentTemplateFiles(Component $component, $view = 'default')
+	public function formatComponentTemplateFiles(Component $component, $renderMode = ITemplateLocator::DEFAULT_COMPONENT_RENDER_MODE)
 	{
 		$presenter = $component->getPresenter();
 		$name = $presenter->getName();
 		$_presenter = substr($name, strrpos(':' . $name, ':'));
 
 		$componentShortName = $component->getReflection()->getShortName();
-		$variants = $this->getComponentVariants($componentShortName, $view);
+		$variants = $this->getComponentVariants($componentShortName, $renderMode);
 
 		$dir = dirname($presenter->getReflection()->getFileName());
 		$dir = is_dir("$dir/templates") ? $dir : dirname($dir);
@@ -84,15 +84,15 @@ class ConventionalTemplateLocator implements ITemplateLocator
 	}
 
 
-	private function getComponentVariants($name, $view)
+	private function getComponentVariants($name, $renderMode)
 	{
 		$list = array();
-		$list[] = "$name/$view.latte";
-		$list[] = "$name.$view.latte";
-		$list[] = "$name/$view.phtml";
-		$list[] = "$name.$view.phtml";
+		$list[] = "$name/$renderMode.latte";
+		$list[] = "$name.$renderMode.latte";
+		$list[] = "$name/$renderMode.phtml";
+		$list[] = "$name.$renderMode.phtml";
 
-		if ($view !== 'default') {
+		if ($renderMode !== 'default') {
 			$list[] = "$name/default.latte";
 			$list[] = "$name.default.latte";
 			$list[] = "$name/default.phtml";

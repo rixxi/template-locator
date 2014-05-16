@@ -112,7 +112,7 @@ class PriorityTemplateLocator implements ITemplateLocator
 	 *
 	 * @inherit
 	 */
-	public function formatComponentTemplateFiles(Component $component, $view = 'default')
+	public function formatComponentTemplateFiles(Component $component, $renderMode = ITemplateLocator::DEFAULT_COMPONENT_RENDER_MODE)
 	{
 		$presenter = $component->getPresenter();
 		/** @var \Nette\Application\UI\Presenter $presenter */
@@ -123,7 +123,7 @@ class PriorityTemplateLocator implements ITemplateLocator
 		if (substr($componentShortName, -9) === 'Component') {
 			$componentShortName = substr($componentShortName, 0, -9);
 		}
-		$variants = $this->getComponentVariants($componentShortName, $view);
+		$variants = $this->getComponentVariants($componentShortName, $renderMode);
 
 		$directories = $this->getAdjustedDirectories($presenter, $moduleDepth);
 		$list = array();
@@ -159,15 +159,15 @@ class PriorityTemplateLocator implements ITemplateLocator
 	}
 
 
-	private function getComponentVariants($name, $view)
+	private function getComponentVariants($name, $renderMode)
 	{
 		$list = array();
-		$list[] = "$name/$view.latte";
-		$list[] = "$name.$view.latte";
-		$list[] = "$name/$view.phtml";
-		$list[] = "$name.$view.phtml";
+		$list[] = "$name/$renderMode.latte";
+		$list[] = "$name.$renderMode.latte";
+		$list[] = "$name/$renderMode.phtml";
+		$list[] = "$name.$renderMode.phtml";
 
-		if ($view !== 'default') {
+		if ($renderMode !== 'default') {
 			$list[] = "$name/default.latte";
 			$list[] = "$name.default.latte";
 			$list[] = "$name/default.phtml";

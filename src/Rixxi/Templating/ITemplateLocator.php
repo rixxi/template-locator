@@ -9,6 +9,8 @@ use Nette\ComponentModel\Component;
 interface ITemplateLocator
 {
 
+	const DEFAULT_COMPONENT_RENDER_MODE = 'default';
+
 	/**
 	 * Formats layout template file names.
 	 *
@@ -34,6 +36,6 @@ interface ITemplateLocator
 	 * @param string
 	 * @return array
 	 */
-	function formatComponentTemplateFiles(Component $component, $view = 'default');
+	function formatComponentTemplateFiles(Component $component, $renderMode = self::DEFAULT_COMPONENT_RENDER_MODE);
 
 }
